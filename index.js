@@ -1,8 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { Configuration, OpenAIApi } from 'openai';
-import dayjs from 'dayjs';
-import * as chrono from 'chrono-node';
+import { stringToDate } from './services/string-to-date.js';
 
 dotenv.config();
 const app = express();
@@ -11,25 +10,6 @@ const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
-
-const stringToDateString = (string, timezone = 'Etc/GMT') => {
-  const localTime = dayjs(new Date(), timezone)
-  const localOffset = localTime.utcOffset();
-  const custom = chrono.casual.clone();
-  custom.refiners.push({
-    refine: (context, results) => {
-      results.forEach((result) => {
-        result.start.imply('timezoneOffset', localOffset)
-        result.end && result.end.imply('timezoneOffset', localOffset)
-      })
-      return results
-    }
-  });
-  const date = custom.parseDate(string);
-  if (!date) return null;
-  return dayjs(date).toISOString();
-};
-
 
 app.get('/', async (req, res) => {
   const text = req.query.text;
@@ -68,7 +48,7 @@ app.get('/', async (req, res) => {
       original_text: text,
       temporal_text: content.temp,
       rest_text: content.rest,
-      date: stringToDateString(content.temp_en),
+      date: stringToDate(content.temp_en),
     });
   } catch (error) {
     console.log(error);
