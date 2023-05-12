@@ -3,7 +3,15 @@ import express from 'express';
 const app = express();
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  if ( !req.query.text ) {
+    return res.status(400).json({
+      error: 'Missing required parameter `text`',
+    });
+  }
+
+  res.json({
+    text: req.query.text,
+  });
 });
 
 app.listen(3000, () => {
