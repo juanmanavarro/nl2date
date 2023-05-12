@@ -16,12 +16,16 @@ app.get('/', async (req, res) => {
   try {
     const parsedText = await parseText(text);
 
-    return res.json({
+    const response = {
       original_text: text,
       temporal_text: parsedText.temp,
       rest_text: parsedText.rest,
       date: stringToDate(parsedText.temp_en),
-    });
+    };
+
+    console.log(response);
+
+    return res.json(response);
   } catch (error) {
     console.log(error);
     return res.status(500).json({
