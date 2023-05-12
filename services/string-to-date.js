@@ -1,20 +1,17 @@
-import dayjs from 'dayjs';
 import * as chrono from 'chrono-node';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc.js';
+import timezone from 'dayjs/plugin/timezone.js';
 
-export const stringToDate = (string, timezone = 'Etc/GMT') => {
-  const localTime = dayjs(new Date(), timezone)
-  const localOffset = localTime.utcOffset();
-  const custom = chrono.casual.clone();
-  custom.refiners.push({
-    refine: (context, results) => {
-      results.forEach((result) => {
-        result.start.imply('timezoneOffset', localOffset)
-        result.end && result.end.imply('timezoneOffset', localOffset)
-      })
-      return results
-    }
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+export const stringToDate = (string) => {
+  const date = chrono.casual.parseDate(string, {
+    timezone: 'GMT',
   });
-  const date = custom.parseDate(string);
-  if (!date) return null;
+
+  if ( !date ) return null;
+
   return dayjs(date).toISOString();
 };
