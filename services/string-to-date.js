@@ -11,5 +11,5 @@ export const stringToDate = (string, timezone = 'UTC') => {
 
   if ( !date ) return null;
 
-  return dayjs(date).tz(timezone).toISOString();
+  return dayjs(date, timezone).toISOString();
 };
