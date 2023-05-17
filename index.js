@@ -28,7 +28,7 @@ app.get('/', async (req, res) => {
 
     const response = {
       original_text: text,
-      temporal_text: parsedText.temp,
+      temporal_text: parsedText.temporal_text,
       rest_text: parsedText.rest,
       date: stringToDate(parsedText.temp_en, tz),
       timezone: tz || 'UTC',
