@@ -32,6 +32,8 @@ app.get('/', async (req, res) => {
   try {
     const parsedText = await parseText(text);
 
+    console.log(parsedText.temp_en);
+
     const response = {
       original_text: text,
       temporal_text: parsedText.temporal_text,
