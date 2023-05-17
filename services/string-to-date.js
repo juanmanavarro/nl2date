@@ -7,7 +7,10 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export const stringToDate = (string, timezone = 'UTC') => {
-  const date = chrono.casual.parseDate(string, { timezone });
+  const date = chrono.casual.parseDate(string, {
+    timezone,
+    instant: new Date(),
+  });
 
   if ( !date ) return null;
 
