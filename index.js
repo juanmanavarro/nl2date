@@ -6,6 +6,12 @@ import dayjs from 'dayjs';
 const app = express();
 
 app.get('/', async (req, res) => {
+  if ( req.header('X-Api-Key') !== process.env.API_KEY ) {
+    return res.status(401).json({
+      error: 'Unauthorized',
+    });
+  }
+
   const text = req.query.text;
   const tz = req.query.timezone;
 
