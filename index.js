@@ -1,15 +1,25 @@
 import express from 'express';
 import { stringToDate } from './services/string-to-date.js';
 import { parseText } from "./services/parse-text.js";
+import dayjs from 'dayjs';
 
 const app = express();
 
 app.get('/', async (req, res) => {
   const text = req.query.text;
+  const tz = req.query.timezone;
 
-  if (!text) {
+  if ( !text ) {
     return res.status(400).json({
       error: 'Missing required parameter `text`',
+    });
+  }
+
+  try {
+    dayjs.tz(null, tz)
+  } catch (error) {
+    return res.status(400).json({
+      error: 'Invalid timezone',
     });
   }
 
@@ -20,7 +30,8 @@ app.get('/', async (req, res) => {
       original_text: text,
       temporal_text: parsedText.temp,
       rest_text: parsedText.rest,
-      date: stringToDate(parsedText.temp_en),
+      date: stringToDate(parsedText.temp_en, tz),
+      timezone: tz || 'UTC',
     };
 
     console.log(response);

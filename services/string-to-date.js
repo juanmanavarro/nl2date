@@ -6,12 +6,10 @@ import timezone from 'dayjs/plugin/timezone.js';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const stringToDate = (string) => {
-  const date = chrono.casual.parseDate(string, {
-    timezone: 'GMT',
-  });
+export const stringToDate = (string, timezone = 'UTC') => {
+  const date = chrono.casual.parseDate(string, { timezone });
 
   if ( !date ) return null;
 
-  return dayjs(date).toISOString();
+  return dayjs(date).tz(timezone).toISOString();
 };
