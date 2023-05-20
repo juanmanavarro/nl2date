@@ -9,15 +9,21 @@ dayjs.extend(timezone);
 dayjs.tz.setDefault('UTC')
 
 export const stringToDate = (string, timezone = 'UTC') => {
-  console.log(string, timezone);
-  const date = chrono.casual.parseDate(string, {
-    timezone,
-    instant: new Date(),
-  });
+  const localTime = dayjs.tz(new Date(), timezone)
+    const localOffset = localTime.utcOffset();
 
-  console.log(date);
+    const custom = chrono.casual.clone();
+    custom.refiners.push({
+      refine: (context, results) => {
+        results.forEach((result) => {
+          result.start.imply('timezoneOffset', localOffset)
+          result.end && result.end.imply('timezoneOffset', localOffset)
+        })
+        return results;
+      }});
 
-  if ( !date ) return null;
+    const date = custom.parseDate(string);
+    if ( !date ) return null;
 
-  return dayjs(date, timezone).toISOString();
+    return dayjs(date).toISOString();
 };
