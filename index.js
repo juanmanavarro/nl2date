@@ -50,10 +50,16 @@ app.get('/', async (req, res) => {
   }
 });
 
-app.get('/:pair', async (req, res) => {
+app.get('/price/:pair', async (req, res) => {
   if ( req.header('X-Api-Key') !== process.env.API_KEY ) {
     return res.status(401).json({
       error: 'Unauthorized',
+    });
+  }
+
+  if ( !req.params.pair ) {
+    return res.status(400).json({
+      error: 'Missing required parameter `pair`',
     });
   }
 
