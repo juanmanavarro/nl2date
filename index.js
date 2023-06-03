@@ -3,8 +3,15 @@ import { stringToDate } from './services/string-to-date.js';
 import { parseText } from "./services/parse-text.js";
 import dayjs from 'dayjs';
 import axios from 'axios';
+import rateLimit from 'express-rate-limit';
 
 const app = express();
+
+
+const limiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 10,
+});
 
 app.get('/', async (req, res) => {
   if ( req.header('X-Api-Key') !== process.env.API_KEY ) {
@@ -50,12 +57,17 @@ app.get('/', async (req, res) => {
   }
 });
 
-app.get('/price/:pair', async (req, res) => {
-  if ( req.header('X-Api-Key') !== process.env.API_KEY ) {
-    return res.status(401).json({
-      error: 'Unauthorized',
-    });
-  }
+/**
+ * Get the price of a pair
+ * @param {string} pair - The pair to get the price
+ * @returns {string} The price of the pair
+ */
+app.use(limiter).get('/price/:pair', async (req, res) => {
+  // if ( req.header('X-Api-Key') !== process.env.API_KEY ) {
+  //   return res.status(401).json({
+  //     error: 'Unauthorized',
+  //   });
+  // }
 
   if ( !req.params.pair ) {
     return res.status(400).json({
