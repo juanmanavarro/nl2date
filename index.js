@@ -78,8 +78,13 @@ app.use(limiter).get('/price/:pair', async (req, res) => {
   try {
     const url = `https://api.binance.com/api/v3/klines?symbol=${req.params.pair.toUpperCase()}&interval=1d&limit=2`;
     const { data } = await axios.get(url);
+    let price = data[0][4];
 
-    return res.send(data[0][4]);
+    if ( req.query.decimal_separator === 'comma' ) {
+      price = price.replace('.', ',');
+    }
+
+    return res.send(price);
   } catch (error) {
     return res.status(400).json({
       error: 'Not found',
