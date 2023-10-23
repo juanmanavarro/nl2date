@@ -57,41 +57,6 @@ app.get('/', async (req, res) => {
   }
 });
 
-/**
- * Get the price of a pair
- * @param {string} pair - The pair to get the price
- * @returns {string} The price of the pair
- */
-app.use(limiter).get('/price/:pair', async (req, res) => {
-  // if ( req.header('X-Api-Key') !== process.env.API_KEY ) {
-  //   return res.status(401).json({
-  //     error: 'Unauthorized',
-  //   });
-  // }
-
-  if ( !req.params.pair ) {
-    return res.status(400).json({
-      error: 'Missing required parameter `pair`',
-    });
-  }
-
-  try {
-    const url = `https://api.binance.com/api/v3/klines?symbol=${req.params.pair.toUpperCase()}&interval=1d&limit=2`;
-    const { data } = await axios.get(url);
-    let price = data[0][4];
-
-    if ( req.query.decimal_separator === 'comma' ) {
-      price = price.replace('.', ',');
-    }
-
-    return res.send(price);
-  } catch (error) {
-    return res.status(400).json({
-      error: 'Not found',
-    });
-  }
-});
-
 app.listen(3000, () => {
   console.log('Server listening on port 3000');
 });
